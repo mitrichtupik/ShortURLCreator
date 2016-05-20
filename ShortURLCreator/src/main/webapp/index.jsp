@@ -22,61 +22,17 @@
 				<div class="header-h1">
 					<h1>Short URL creator service</h1>
 				</div>
-				<div class="header-menu-left">
-					<ul>
-						<li><button class="header-create-button">Create shortURL</button></li>
-						<li><button class="header-view-button">View others shortURL</button></li>
-						<li><button class="header-viewAllMy-button">View all my shortURL</button></li>
-					</ul>
-				</div>
+				<div class="header-menu-left"></div>
 				<div class="header-menu-right">
 					<ul>
-						<li><span class="header-userName"></span></li>
-						<li><button class="header-login-button">Login</button></li>
-						<li><button class="header-signup-button">Sign up</button></li>
+						<li><span class="header-userName"></span></li><li>
+						<button class="header-login-button">Login</button></li><li>
+						<button class="header-signup-button">Sign up</button></li>
 					</ul>
 				</div>
 			</div>
 			<hr>
 		</header>		
-		<div class="create-url">
-				<div class="create-menu">
-					<label>URL to be shorten
-						<br>
-			  			<input type="text" class="inputLongURL" name="longURL" value="https://www.owasp.org/index.php/REST_Security_Cheat_Sheet"
-			  			autocomplete="off">
-		  			</label>
-		  			<br>
-		  			<label>Description
-			  			<br>
-			  			<textarea class="inputDescription" name="description" rows="4">This is another link to resource</textarea>
-		  			</label>
-		  			<br>
-		  			<label>Tags (separate by comma)
-						<br>
-			  			<input type="text" class="inputTags" name="tags" value="spring, NoSQL,   mongoDB" autocomplete="off">
-		  			</label>
-		  			<br><br>
-		  			<button class="create-button big-button">Shorten</button>
-				</div>
-				<div class="create-result">
-					<script> new Clipboard(".copy-button");</script>
-				</div>
-		</div>
-		<div class="view-url">
-				<div class="view-menu">
-					<label>Enter short URL to viewing full info
-						<br>
-			  			<input type="text" class="inputShortURL" name="ShortURL" value="http://localhost:8080/ShortURLCreator/Af5w6K"
-			  			autocomplete="off">
-		  			</label>
-		  			<br><br>
-		  			<button class="view-button big-button">View info</button>
-				</div>
-				<div class="view-result">
-					<script> new Clipboard(".copy-button");</script>
-				</div>
-		</div>
-		
+		<div class="main-container"></div>
 	</body>
 </html>

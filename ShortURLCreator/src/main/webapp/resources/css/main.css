@@ -17,7 +17,7 @@ ul {
 	padding:0;
 }
 li {
-	display:inline;
+	display:inline-block;
 }
 button {
 	padding:10px;
@@ -27,9 +27,16 @@ button {
 	width:auto;
 	min-width:100px;
 }
+.header-menu-left button {
+	margin-right:5px;
+}
+.header-menu-right button {
+	margin-left:5px;
+}
 .tag-button {
 	padding:5px;
 	width:auto;
+	margin-right:5px;
 }
 .copy-button {
 	padding:5px;
@@ -59,7 +66,6 @@ textarea {
 }
 .header-menu-left {
 	float:left;
-	display: none;
 }
 .header-menu-right {
 	float:right;
@@ -69,20 +75,15 @@ textarea {
 	clear: both;
 	display: table;
 }
-.create-url, .view-url {
+.main-container {
 	width:600px;
 	background:#bbf174;
 	margin:auto;
 	padding: 20px 20px;
 	border:1px solid black;
 }
-.create-url {
-	display:none;
-}
 .create-result, .view-result {
-	border-top:1px solid #9b9b9b;
-	display:none;
-	margin-top:10px;
+	display: none;
 }
 .login-container {
 	position: fixed;

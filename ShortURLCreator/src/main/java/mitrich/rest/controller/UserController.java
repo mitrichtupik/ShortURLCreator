@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,16 +28,15 @@ public class UserController {
 			return "{\"message\":\"This user name is already taken\"}";
 	}
 
-	@RequestMapping(value = "/user/{userName}", method = RequestMethod.POST)
-	public String findUser(@PathVariable String userName, @RequestBody User usr) throws NoSuchAlgorithmException {
+	@RequestMapping(value = "/login/", method = RequestMethod.POST)
+	public String loginUser(@RequestBody User usr) throws NoSuchAlgorithmException {
 
-		User user = this.userService.findByUserName(userName);
-		String password = usr.getPassword();
+		User user = this.userService.findByUserName(usr.getUserName());
 
 		if (user == null) {
 			return "{\"message\":\"Invalid user name\"}";
 		}
-		if (!passwordEncode(password).equals(user.getPassword())) {
+		if (!passwordEncode(usr.getPassword()).equals(user.getPassword())) {
 			return "{\"message\":\"Invalid password\"}";
 		}
 

@@ -82,7 +82,7 @@ textarea {
 	padding: 20px 20px;
 	border:1px solid black;
 }
-.create-result, .view-result {
+.create-result, .view-result, .view-tag-result {
 	display: none;
 }
 .login-container {

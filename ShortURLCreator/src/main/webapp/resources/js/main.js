@@ -134,8 +134,7 @@ $(function(){
 					dataType: 'json',
 					async: true,
 					success: function(result){
-						$('.view-tag-result').html('<hr><hr><p>Tag: '+tag+'</p>');
-						ViewUrlByTag(result)
+						ViewUrlByTag(result, tag)
 					},
 					error: function(jqXHR, textStatus, errorThrown){
 		                alert(jqXHR.status + ' ' + jqXHR.responseText);
@@ -143,17 +142,18 @@ $(function(){
 				})
 			});
 			
-			function ViewUrlByTag(resp) {
+			function ViewUrlByTag(resp, tg) {
 				
-				$('.view-tag-result').append('<hr>');
+				$('.view-tag-result').html('<hr><hr><p>Tag: '+tg+'</p><hr>');
 				var i, len = resp.length;
 				for(i=0;i<len;i++){
 					var url = resp[i], shortURL = document.baseURI + url.shortURL;
-					
 					$('.view-tag-result').append('<p>Long URL:<br><a style="color:#9b9b9b;" href="'+url.longURL+'">'+url.longURL + '</a></p>' + 
-							'<p>Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
-							'<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button></p><hr>');
-				}
+												'<p>Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
+												'<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button></p><hr>');
+				};
+				
+				$('.view-tag-result').slideDown(1000);
 			}
 		};
 	};
@@ -186,7 +186,7 @@ $(function(){
 			};
 			
 			
-			var url = document.location.pathname + "user/" + user,
+			var url = document.location.pathname + "login/",
 				JSONobj = {
 					userName: user,
 					password: pass
@@ -304,6 +304,10 @@ $(function(){
 				
 				$('.header-view-button').click(function(){
 					ViewUrl();
+				});
+				
+				$('.header-viewAllMy-button').click(function(){
+					ViewAllMyUrl(user);
 				});
 				
 			});

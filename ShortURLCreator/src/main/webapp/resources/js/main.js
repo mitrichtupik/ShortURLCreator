@@ -1,6 +1,6 @@
 $(function(){
 	
-	function CreateUrl() {
+	function CreateUrl(user) {
 		$('.main-container').html('<div class="create-menu">'+
 										'<label>URL to be shorten<br>'+
 								  			'<input type="text" class="inputLongURL" name="longURL" value="https://www.owasp.org/index.php/REST_Security_Cheat_Sheet" autocomplete="off">'+
@@ -18,6 +18,7 @@ $(function(){
 		$('.create-button').click(function(){
 			var url = document.location.pathname + "url/",
 				JSONobj = {
+					userName: user,
 					longURL: $('.inputLongURL').val(),
 					description: $('.inputDescription').val(),
 					tags:$('.inputTags').val().split(",").map(function(text){return text.trim()})
@@ -194,6 +195,8 @@ $(function(){
 			$.ajax({
 				type: 'POST',
 				url: url,
+//				username:user,
+//				password:pass,
 				dataType: 'json',
 				data: JSON.stringify(JSONobj),
 				contentType:'application/json',
@@ -299,7 +302,7 @@ $(function(){
 												'<button class="header-viewAllMy-button">View all my shortURL</button></li>'+
 											'</ul>');
 				$('.header-create-button').click(function(){
-					CreateUrl();
+					CreateUrl(user);
 				});
 				
 				$('.header-view-button').click(function(){

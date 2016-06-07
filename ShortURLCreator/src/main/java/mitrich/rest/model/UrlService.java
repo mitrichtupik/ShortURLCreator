@@ -1,6 +1,7 @@
 package mitrich.rest.model;
 
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,29 +13,43 @@ public class UrlService {
 	private UrlRepository urlRepository;
 
 	public void save(Url url) {
-		this.urlRepository.save(url);
+		urlRepository.save(url);
 	}
 
 	public List<Url> findAll() {
-		return this.urlRepository.findAll();
+		return urlRepository.findAll();
 	}
 
 	public Url findByShortURL(String shortURL) {
 
-		return this.urlRepository.findByShortURL(shortURL);
+		return urlRepository.findByShortURL(shortURL);
 	}
 
-	public Url findByLongURL(String longURL) {
+	public Url findByLongURLAndUserName(String longURL, String userName) {
 
-		return this.urlRepository.findByLongURL(longURL);
+		return urlRepository.findByLongURLAndUserName(longURL, userName);
 	}
 
 	public List<Url> findByUserName(String userName) {
-		return this.urlRepository.findByUserName(userName);
+		return urlRepository.findByUserName(userName);
 	}
 
 	public List<Url> findByURLTag(String tag) {
-		return this.urlRepository.findByURLTag(tag);
+		return urlRepository.findByURLTag(tag);
+	}
+
+	public String randomString(int length) {
+		Random random = new Random();
+		String str;
+		do {
+			str = "";
+			for (int i = 0; i < length; i++) {
+				int n = random.nextInt(62);
+				str += (char) (n < 10 ? ('0' + n) : (n > 35 ? ('a' + n - 36) : ('A' + n - 10)));
+			}
+		} while (findByShortURL(str) != null);
+
+		return str;
 	}
 
 }

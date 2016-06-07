@@ -9,7 +9,7 @@ public interface UrlRepository extends MongoRepository<Url, String> {
 
 	public Url findByShortURL(String shortURL);
 
-	public Url findByLongURL(String longURL);
+	public Url findByLongURLAndUserName(String longURL, String userName);
 
 	public List<Url> findByUserName(String userName);
 

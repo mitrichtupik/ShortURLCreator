@@ -9,7 +9,7 @@
 	</head>
 	<body>
 		<h1>Incorrect shortURL !!!</h1>
-		<p><a id="idBack" href="/ShortURLCreator/"><button>Link to Short URL creator</button></a></p>
+		<p><a id="idBack" href="${pageContext.request.contextPath}"><button>Link to Short URL creator</button></a></p>
 		
 	</body>
 </html>

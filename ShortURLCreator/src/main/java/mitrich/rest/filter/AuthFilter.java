@@ -8,11 +8,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+@WebFilter(filterName = "authFilter", urlPatterns = { "/url/", "/urls/user/*" })
 public class AuthFilter implements Filter {
 
 	@Autowired
@@ -32,15 +34,16 @@ public class AuthFilter implements Filter {
 
 			// boolean authenticationStatus =
 			// authenticationService.authenticate(authCredentials);
-			boolean authenticationStatus = true;
+			boolean authenticationStatus = "Bearer 123456789abcdef".equals(authCredentials);
 
 			if (authenticationStatus) {
-				System.out.println("authFilter execute");
+				System.out.println("authFilter");
 				chain.doFilter(request, response);
 			} else {
 				if (response instanceof HttpServletResponse) {
 					HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-					httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+							"This user is forbidden to create short URL");
 				}
 			}
 		}

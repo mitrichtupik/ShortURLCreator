@@ -15,7 +15,7 @@ public class AuthenticationService {
 
 	public boolean authenticate(String authCredentials) {
 
-		if (null == authCredentials)
+		if (authCredentials == null)
 			return false;
 		// header value format will be "Basic encodedstring" for Basic
 		// authentication. Example "Basic YWRtaW46YWRtaW4="

@@ -1,6 +1,5 @@
 package mitrich.rest;
 
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -9,8 +8,6 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import mitrich.rest.filter.AuthFilter;
 
 public class WebAppInitializer implements WebApplicationInitializer {
 
@@ -28,8 +25,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
 		servlet.addMapping("/");
 		servlet.setLoadOnStartup(1);
 
-		FilterRegistration.Dynamic filter = servletContext.addFilter("authFilter", new AuthFilter());
-		filter.addMappingForUrlPatterns(null, false, "/url/", "/urls/user/");
 	}
 
 }

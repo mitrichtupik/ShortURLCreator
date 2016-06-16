@@ -29,12 +29,13 @@ $(function(){
 				dataType: 'json',
 				data: JSON.stringify(JSONobj),
 				contentType:'application/json',
+				headers:{'Authorization':'Bearer ' + sessionStorage.getItem('auth_token')},
 				async: true,
 				success: function(result){
 					ViewShortUrl(result)
 				},
 				error: function(jqXHR, textStatus, errorThrown){
-	                alert(jqXHR.status + ' ' + jqXHR.responseText);
+	                alert(jqXHR.responseText);
 	            }
 			})		
 		});
@@ -67,7 +68,7 @@ $(function(){
 	function ViewUrl() {
 		$('.main-container').html('<div class="view-menu">'+
 										'<label>Enter short URL to viewing full info<br>'+
-								  			'<input type="text" class="inputShortURL" name="ShortURL" value="http://localhost:8080/ShortURLCreator/Af5w6K" autocomplete="off">'+
+								  			'<input type="text" class="inputShortURL" name="ShortURL" value="http://localhost:8080/SURL/Af5w6K" autocomplete="off">'+
 							  			'</label><br><br>'+
 							  			'<button class="view-button big-button">View info</button>'+
 									'</div>'+
@@ -201,7 +202,11 @@ $(function(){
 				data: JSON.stringify(JSONobj),
 				contentType:'application/json',
 				async: true,
-				success: function(result){
+				success: function(result,textStatus,jqXHR){
+					var token = jqXHR.getResponseHeader('JWE-Token');
+					if (token) {
+						sessionStorage.setItem('auth_token',token);
+					}
 					SuccessLogin(result, 'You successfully login', user);
 				},
 				error: function(jqXHR, textStatus, errorThrown){
@@ -274,10 +279,10 @@ $(function(){
 								'<br><h3>'+title+'</h3><hr>'+
 								'<button class="close-menu tag-button">X</button>'+
 								'<p><label>User name'+
-									'<br><input type="text" class="login-username" autocomplete="off" required>'+
+									'<br><input type="text" class="login-username" autocomplete="off" value="mit" required>'+
 								'</label></p>'+
 								'<p><label>Password'+
-									'<br><input type="password" class="login-password" autocomplete="off" required>'+
+									'<br><input type="password" class="login-password" autocomplete="off" value="qwerty" required>'+
 								'</label></p>'+
 								'<p class="warning"></p>' +
 								'<button class="submit-button">Submit</button><br>'+

@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Document(collection = "urls")
 public class Url {
 
@@ -32,6 +35,7 @@ public class Url {
 		this.tags = tags;
 	}
 
+	@JsonIgnore
 	public String getId() {
 		return id;
 	}
@@ -56,10 +60,12 @@ public class Url {
 		this.longURL = longURL;
 	}
 
+	@JsonIgnore
 	public String getUserName() {
 		return userName;
 	}
 
+	@JsonProperty()
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}

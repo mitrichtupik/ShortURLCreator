@@ -2,9 +2,8 @@ package mitrich.rest.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,8 @@ public class UrlController {
 	private static final int LENGTH_OF_SHORT_URL = 6;
 
 	@RequestMapping(value = "/url/", method = RequestMethod.POST)
-	public Url createURL(@RequestBody Url url, HttpServletRequest httpServletRequest) {
+	@PostAuthorize("hasRole('ROLE_USER')")
+	public Url createURL(@RequestBody Url url) {
 
 		if (urlService.findByLongURLAndUserName(url.getLongURL(), url.getUserName()) == null) {
 			url.setShortURL(urlService.randomString(LENGTH_OF_SHORT_URL));

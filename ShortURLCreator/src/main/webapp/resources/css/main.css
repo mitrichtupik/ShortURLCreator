@@ -85,7 +85,7 @@ textarea {
 .create-result, .view-result, .view-tag-result {
 	display: none;
 }
-.login-container {
+.login-container, .message-container {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -96,7 +96,7 @@ textarea {
 	margin: 0;
 	background-color: rgba(64, 64, 64, 0.8);
 }
-.login-menu {
+.login-menu, .message-menu{
 	position: relative;
 	top: 50px;
 	width: 300px;
@@ -116,4 +116,9 @@ textarea {
 }
 .warning {
 	color:red;
+}
+.redirect {
+	display: inline-block;
+	float: right;
+	vertical-align: middle;
 }

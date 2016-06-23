@@ -1,13 +1,14 @@
 $(function(){
 	
+//	--------------------------------------------------- Create short URL ------------------------------------------------------
 	function CreateUrl(user) {
 		$('.main-container').html('<div class="create-menu">'+
 										'<label>URL to be shorten<br>'+
 								  			'<input type="text" class="inputLongURL" name="longURL" value="https://www.owasp.org/index.php/REST_Security_Cheat_Sheet" autocomplete="off">'+
 							  			'</label><br>'+
 							  			'<label>Description<br>'+
-								  			'<textarea class="inputDescription" name="description" rows="4">This is another link to resource</textarea>'+
-							  			'</label><br>'+
+							  			'<textarea class="inputDescription" name="description" rows="4">This is another link to resource</textarea>'+
+								  			'</label><br>'+
 							  			'<label>Tags (separate by comma)<br>'+
 								  			'<input type="text" class="inputTags" name="tags" value="spring, NoSQL,   mongoDB" autocomplete="off">'+
 							  			'</label><br><br>'+
@@ -16,7 +17,7 @@ $(function(){
 									'<div class="create-result"></div>');
 		
 		$('.create-button').click(function(){
-			var url = document.location.pathname + "url/",
+			var url = document.location.pathname + "urls/",
 				JSONobj = {
 					userName: user,
 					longURL: $('.inputLongURL').val(),
@@ -35,7 +36,8 @@ $(function(){
 					ViewShortUrl(result)
 				},
 				error: function(jqXHR, textStatus, errorThrown){
-	                alert(jqXHR.responseText);
+					jqXHR.status == '409' ? Message('This link is already exist in database.<br> Please enter another link.') :
+											alert(jqXHR.status + ' - ' + errorThrown);
 	            }
 			})		
 		});
@@ -44,16 +46,11 @@ $(function(){
 		    var shortURL = document.baseURI + resp.shortURL,
 		    	kl = ".create-result";
 			
-			if (resp.shortURL == null){
-				$(kl).html('<hr><p>This link is already exist in database. Please enter another link.</p>');	
-			} else {
-				$(kl).html('<hr><p>Your long URL:<br><a style="color:#9b9b9b;" href="'+resp.longURL+'">'+resp.longURL + '</a></p>' + 
-							'<p>Your short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
-							'<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button></p>');
-			}
-			
-			$(kl).append('<button class="close-button">Close</button>');
-			$(kl).append('<script> new Clipboard(".copy-button");</script>');
+			$(kl).html('<hr><p>Your long URL:<br><a style="color:#9b9b9b;" href="'+resp.longURL+'">'+resp.longURL + '</a></p>')
+				 .append('<p>Your short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
+						 '<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button></p>')
+				 .append('<button class="close-button">Close</button>')
+				 .append('<script> new Clipboard(".copy-button");</script>');
 			
 			$('.close-button').click(function() {
 				$(kl).slideUp(1000, function() {
@@ -65,19 +62,20 @@ $(function(){
 		};
 	};
 	
+//	--------------------------------------------------- View short URL information ---------------------------------------------
 	function ViewUrl() {
 		$('.main-container').html('<div class="view-menu">'+
 										'<label>Enter short URL to viewing full info<br>'+
 								  			'<input type="text" class="inputShortURL" name="ShortURL" value="http://localhost:8080/SURL/Af5w6K" autocomplete="off">'+
 							  			'</label><br><br>'+
 							  			'<button class="view-button big-button">View info</button>'+
-									'</div>'+
-									'<div class="view-result"></div>');
+								  '</div>'+
+								  '<div class="view-result"></div>');
 									
 		$('.view-button').click(function(){
 			var userUrl = $('.inputShortURL').val();
 			if(document.location.href === userUrl.slice(0,-6)){
-				var url = document.location.pathname + 'url/' + userUrl.replace(document.location.href,"");
+				var url = document.location.pathname + 'urls/' + userUrl.replace(document.location.href,"");
 				$.ajax({
 					type: 'GET',
 					url: url,
@@ -87,12 +85,13 @@ $(function(){
 						ViewUrlInfo(result)
 					},
 					error: function(jqXHR, textStatus, errorThrown){
-						alert(jqXHR.status + ' ' + jqXHR.responseText);
-		            }
+						jqXHR.status == '404' ? Message('This short link does not exist in database.<br> Please enter another link.') :
+												alert(jqXHR.status + ' - ' + errorThrown);
+					}
 				})
 			}
 			else {
-				alert('Incorrect URL!!! Please check the input.');
+				Message('Incorrect URL!!!<br> Please check the input.');
 			}
 		});
 		
@@ -100,25 +99,20 @@ $(function(){
 		    var shortURL = document.baseURI + resp.shortURL,
 		    	kl = ".view-result";
 			
-			if (resp.shortURL == null){
-				$(kl).html('<hr><p>This short link does not exist in database. Please enter another link.</p>');	
-			} else {
-				$(kl).html('<hr><p>Long URL:<br><a style="color:#9b9b9b;" href="'+resp.longURL+'">'+resp.longURL + '</a></p>' + 
-							'<p>Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a></p>' +
-							'<p>Description:<br>'+resp.description+'</p>');
-				
-				var i, len = resp.tags.length, text='<p>Tags:<br>';
-				for(i=0;i<len;i++){
-					var tag = resp.tags[i];
-					if (tag !== ""){
-						text += '<button class="tag-button">' + tag + '</button>';
-					}
-				}
-				$(kl).append(text+'</p><div class="view-tag-result"></div>');
-			}
+			$(kl).html('<hr><p>Long URL:<br><a style="color:#9b9b9b;" href="'+resp.longURL+'">'+resp.longURL + '</a></p>' + 
+						'<p>Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a></p>' +
+						'<p>Description:<br>'+resp.description+'</p>');
 			
-			$(kl).append('<button class="close-button">Close</button>');
-			$(kl).append('<script> new Clipboard(".copy-button");</script>');
+			var i, len = resp.tags.length, text='<p>Tags:<br>';
+			for(i=0;i<len;i++){
+				var tag = resp.tags[i];
+				if (tag !== ""){
+					text += '<button class="tag-button">' + tag + '</button>';
+				}
+			}
+			$(kl).append(text+'</p><div class="view-tag-result"></div>')
+				 .append('<button class="close-button">Close</button>')
+				 .append('<script> new Clipboard(".copy-button");</script>');
 			
 			$('.close-button').click(function() {
 				$(kl).slideUp(1000, function() {
@@ -139,7 +133,8 @@ $(function(){
 						ViewUrlByTag(result, tag)
 					},
 					error: function(jqXHR, textStatus, errorThrown){
-		                alert(jqXHR.status + ' ' + jqXHR.responseText);
+						jqXHR.status == '404' ? Message('This tag does not exist in database.<br> Please enter another link.') :
+												alert(jqXHR.status + ' - ' + errorThrown);
 		            }
 				})
 			});
@@ -160,10 +155,80 @@ $(function(){
 		};
 	};
 	
-	
-	
+//	--------------------------------------------------- View information of all user short URL ---------------------------------------------
+	function ViewAllMyUrl(user) {
+
+		var url = document.location.pathname + 'users/' + user + '/urls';
+		$.ajax({
+			type: 'GET',
+			url: url,
+			dataType: 'json',
+			async: true,
+			success: function(result){
+				ViewAllUrlInfo(result)
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				jqXHR.status == '404' ? Message('This user doesn\'t have any short link.') :
+										alert(jqXHR.status + ' - ' + errorThrown);
+			}
+		})
+		
+		function ViewAllUrlInfo(resp) {
+			$('.main-container').html('<div class="view-all-result"></div>');
+			
+			var kl = ".view-all-result";
+			
+			$(kl).html('<script> new Clipboard(".copy-button");</script>');
+			
+			var i, len = resp.length;
+			for(i=0;i<len;i++){
+				var url = resp[i], shortURL = document.baseURI + url.shortURL;
+				$(kl).append('<p>Long URL:<br><a style="color:#9b9b9b;" href="'+url.longURL+'">'+url.longURL + '</a></p>' + 
+							'<p>Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
+							'<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button>'+
+							'<button class="copy-button edit">Edit</button><span class="redirect">redirect: '+url.redirectCount+'</span></p>'+
+							'<p>Description:<br>'+url.description+'</p><hr>');
+			};
+			
+		};
+	};
+	  
 	ViewUrl();
+
+	function Message (message) {
+		$('body').append('<div class="message-container">'+
+							'<div class="message-menu">'+
+								'<br><h3>'+message+'</h3>'+
+								'<br><button class="close-button">Close</button><br>'+
+							'</div>'+
+					 	 '</div>');
+		$('.close-button').click(function() {
+			$('.message-container').remove();
+		});
+	}
 	
+	function LoginMenu(title) {
+		$('body').append('<div class="login-container">'+
+							'<div class="login-menu">'+
+								'<br><h3>'+title+'</h3><hr>'+
+								'<button class="close-menu tag-button">X</button>'+
+								'<p><label>User name'+
+									'<br><input type="text" class="login-username" autocomplete="off" value="mit" required>'+
+								'</label></p>'+
+								'<p><label>Password'+
+									'<br><input type="password" class="login-password" autocomplete="off" value="qwerty" required>'+
+								'</label></p>'+
+								'<p class="warning"></p>' +
+								'<button class="submit-button">Submit</button><br>'+
+							'</div>'+
+						 '</div>');
+		$('.close-menu').click(function() {
+			$('.login-container').remove();
+		});
+		
+	};
+	
+//	--------------------------------------------------- Login user ------------------------------------------------------
 	$('.header-login-button').click(function() {
 		LoginMenu("Login");
 		var kl = '.warning';
@@ -196,8 +261,6 @@ $(function(){
 			$.ajax({
 				type: 'POST',
 				url: url,
-//				username:user,
-//				password:pass,
 				dataType: 'json',
 				data: JSON.stringify(JSONobj),
 				contentType:'application/json',
@@ -207,17 +270,18 @@ $(function(){
 					if (token) {
 						sessionStorage.setItem('auth_token',token);
 					}
-					SuccessLogin(result, 'You successfully login', user);
+					SuccessLogin(jqXHR, 'You successfully login', user);
 				},
 				error: function(jqXHR, textStatus, errorThrown){
-	                alert(jqXHR.status + ' ' + jqXHR.responseText);
+					$(kl).html('Invalid user name or password.');
 	            }
 			})
 			
 		});
 
 	});
-	
+
+//	--------------------------------------------------- Sing up user ------------------------------------------------------
 	$('.header-signup-button').click(function() {
 		LoginMenu("Sign up");
 		var kl = '.warning';
@@ -250,7 +314,7 @@ $(function(){
 			};
 			
 			
-			var url = document.location.pathname + "user/",
+			var url = document.location.pathname + "users/",
 				JSONobj = {
 					userName: user,
 					password: pass
@@ -262,40 +326,19 @@ $(function(){
 				data: JSON.stringify(JSONobj),
 				contentType:'application/json',
 				async: true,
-				success: function(result){
-					SuccessLogin(result, 'You become a user of our service', user);
+				success: function(result,textStatus,jqXHR){
+					SuccessLogin(jqXHR, 'You become a user of our service.', user);
 				},
 				error: function(jqXHR, textStatus, errorThrown){
-	                alert(jqXHR.status + ' ' + jqXHR.responseText);
+					$(kl).html('This user name is already taken.');
 	            }
 			})
 			
 		});
 	});
 			
-	function LoginMenu(title) {
-		$('body').append('<div class="login-container">'+
-							'<div class="login-menu">'+
-								'<br><h3>'+title+'</h3><hr>'+
-								'<button class="close-menu tag-button">X</button>'+
-								'<p><label>User name'+
-									'<br><input type="text" class="login-username" autocomplete="off" value="mit" required>'+
-								'</label></p>'+
-								'<p><label>Password'+
-									'<br><input type="password" class="login-password" autocomplete="off" value="qwerty" required>'+
-								'</label></p>'+
-								'<p class="warning"></p>' +
-								'<button class="submit-button">Submit</button><br>'+
-							'</div>'+
-						 '</div>');
-		$('.close-menu').click(function() {
-			$('.login-container').remove();
-		});
-		
-	};
-	
-	function SuccessLogin(res, mes, user) {
-		if (res.message === "OK"){
+	function SuccessLogin(jqXHR, mes, user) {
+		if (jqXHR.status == "200" || jqXHR.status == "201"){
 			$('.login-menu').html('<br><h2>Congratulations !!!<br>'+ mes +'</h2>'+
 								  '<br><button class="close-button">Close</button><br>');
 			$('.close-button').click(function() {
@@ -306,6 +349,7 @@ $(function(){
 												'<button class="header-view-button">View others shortURL</button></li><li>'+
 												'<button class="header-viewAllMy-button">View all my shortURL</button></li>'+
 											'</ul>');
+				CreateUrl(user);
 				$('.header-create-button').click(function(){
 					CreateUrl(user);
 				});
@@ -319,9 +363,7 @@ $(function(){
 				});
 				
 			});
-		} else {
-			$('.warning').html(res.message);
-		}
+		} 
 	}
 			
 });

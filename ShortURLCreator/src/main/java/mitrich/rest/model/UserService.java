@@ -12,8 +12,8 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public void save(User user) {
-		userRepository.save(user);
+	public User save(User user) {
+		return userRepository.save(user);
 	}
 
 	public User findByUserName(String userName) {

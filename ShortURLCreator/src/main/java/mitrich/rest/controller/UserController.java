@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,31 +21,30 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value = "/user/", method = RequestMethod.POST)
-	public String createUser(@RequestBody User user) throws NoSuchAlgorithmException {
-		if (userService.findByUserName(user.getUserName()) == null) {
-			user.setPassword(userService.passwordEncode(user.getPassword() + user.getUserName()));
-			userService.save(user);
-			return "{\"message\":\"OK\"}";
-		} else
-			return "{\"message\":\"This user name is already taken\"}";
+	@RequestMapping(value = "/users/", method = RequestMethod.POST)
+	public ResponseEntity<User> createUser(@RequestBody User user) throws NoSuchAlgorithmException {
+		if (userService.findByUserName(user.getUserName()) != null) {
+			return new ResponseEntity<User>(HttpStatus.CONFLICT);
+		}
+
+		user.setPassword(userService.passwordEncode(user.getPassword() + user.getUserName()));
+		User saved_user = userService.save(user);
+		return new ResponseEntity<User>(saved_user, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/login/", method = RequestMethod.POST)
-	public String loginUser(@RequestBody User usr, HttpServletResponse httpServletResponse)
+	public ResponseEntity<User> loginUser(@RequestBody User usr, HttpServletResponse httpServletResponse)
 			throws NoSuchAlgorithmException {
 
 		User user = userService.findByUserName(usr.getUserName());
 
-		if (user == null) {
-			return "{\"message\":\"Invalid user name\"}";
-		}
-		if (!userService.passwordEncode(usr.getPassword() + usr.getUserName()).equals(user.getPassword())) {
-			return "{\"message\":\"Invalid password\"}";
+		if (user == null
+				|| !userService.passwordEncode(usr.getPassword() + usr.getUserName()).equals(user.getPassword())) {
+			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 		}
 
 		httpServletResponse.addHeader("JWE-Token", "123456789abcdef");
-		return "{\"message\":\"OK\"}";
+		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 
 }

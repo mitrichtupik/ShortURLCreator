@@ -24,12 +24,12 @@ public class IndexController {
 
 	@RequestMapping(value = "{shortURL}", method = RequestMethod.GET)
 	public String findShortUrl(@PathVariable String shortURL) {
-		Url url = this.urlService.findByShortURL(shortURL);
+		Url url = urlService.findByShortURL(shortURL);
 		if (url == null)
 			return "view/errorPage";
 		else {
 			url.setRedirectCount(url.getRedirectCount() + 1);
-			this.urlService.save(url);
+			urlService.save(url);
 			return "redirect:" + url.getLongURL();
 		}
 	}

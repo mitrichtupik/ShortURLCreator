@@ -3,6 +3,8 @@ package mitrich.rest.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,31 +23,48 @@ public class UrlController {
 
 	private static final int LENGTH_OF_SHORT_URL = 6;
 
-	@RequestMapping(value = "/url/", method = RequestMethod.POST)
+	@RequestMapping(value = "/urls/", method = RequestMethod.POST)
 	@PostAuthorize("hasRole('ROLE_USER')")
-	public Url createURL(@RequestBody Url url) {
+	public ResponseEntity<Url> createURL(@RequestBody Url url) {
 
-		if (urlService.findByLongURLAndUserName(url.getLongURL(), url.getUserName()) == null) {
-			url.setShortURL(urlService.randomString(LENGTH_OF_SHORT_URL));
-			urlService.save(url);
-			return urlService.findByShortURL(url.getShortURL());
-		} else
-			return url;
+		if (urlService.findByLongURLAndUserName(url.getLongURL(), url.getUserName()) != null) {
+			return new ResponseEntity<Url>(HttpStatus.CONFLICT);
+		}
+		url.setShortURL(urlService.randomString(LENGTH_OF_SHORT_URL));
+		Url saved_url = urlService.save(url);
+		return new ResponseEntity<Url>(saved_url, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/tags/{tag}", method = RequestMethod.GET)
-	public List<Url> findURLTag(@PathVariable String tag) {
-		return urlService.findByURLTag(tag);
+	public ResponseEntity<List<Url>> findURLTag(@PathVariable String tag) {
+		List<Url> tags = urlService.findByURLTag(tag);
+
+		if (tags == null || tags.isEmpty()) {
+			return new ResponseEntity<List<Url>>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<List<Url>>(tags, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/url/{shortURL}", method = RequestMethod.GET)
-	public Url findURL(@PathVariable String shortURL) {
+	@RequestMapping(value = "/urls/{shortURL}", method = RequestMethod.GET)
+	public ResponseEntity<Url> findURL(@PathVariable String shortURL) {
 
 		Url url = urlService.findByShortURL(shortURL);
 
 		if (url == null) {
-			url = new Url();
+			return new ResponseEntity<Url>(HttpStatus.NOT_FOUND);
 		}
-		return url;
+
+		return new ResponseEntity<Url>(url, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/users/{userName}/urls", method = RequestMethod.GET)
+	public ResponseEntity<List<Url>> findAllURLByUserName(@PathVariable String userName) {
+		List<Url> urls = urlService.findByUserName(userName);
+
+		if (urls == null || urls.isEmpty()) {
+			return new ResponseEntity<List<Url>>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<List<Url>>(urls, HttpStatus.OK);
+	}
+
 }

@@ -42,8 +42,7 @@ public class AuthFilter implements Filter {
 			} else {
 				if (response instanceof HttpServletResponse) {
 					HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-					httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-							"This user is forbidden to create short URL");
+					httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
 				}
 			}
 		}

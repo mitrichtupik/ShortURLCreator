@@ -12,8 +12,8 @@ public class UrlService {
 	@Autowired
 	private UrlRepository urlRepository;
 
-	public void save(Url url) {
-		urlRepository.save(url);
+	public Url save(Url url) {
+		return urlRepository.save(url);
 	}
 
 	public List<Url> findAll() {

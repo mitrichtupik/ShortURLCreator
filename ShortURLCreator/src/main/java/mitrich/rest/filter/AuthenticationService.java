@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import mitrich.rest.model.UserService;
+import mitrich.rest.service.UserService;
 
 public class AuthenticationService {
 

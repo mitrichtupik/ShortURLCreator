@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import mitrich.rest.model.Url;
-import mitrich.rest.model.UrlService;
+import mitrich.rest.service.UrlService;
 
 @Controller
 @RequestMapping("/")

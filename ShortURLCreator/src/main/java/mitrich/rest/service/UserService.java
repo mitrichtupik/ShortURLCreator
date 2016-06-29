@@ -1,12 +1,15 @@
-package mitrich.rest.model;
+package mitrich.rest.service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
+import mitrich.rest.model.User;
+import mitrich.rest.repository.UserRepository;
+
+@Service
 public class UserService {
 
 	@Autowired

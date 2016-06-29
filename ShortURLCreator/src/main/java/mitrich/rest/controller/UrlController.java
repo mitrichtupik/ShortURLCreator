@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import mitrich.rest.model.Url;
-import mitrich.rest.model.UrlService;
+import mitrich.rest.service.UrlService;
 
 @RestController
 public class UrlController {

@@ -1,9 +1,11 @@
-package mitrich.rest.model;
+package mitrich.rest.repository;
 
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+
+import mitrich.rest.model.Url;
 
 public interface UrlRepository extends MongoRepository<Url, String> {
 

@@ -1,12 +1,15 @@
-package mitrich.rest.model;
+package mitrich.rest.service;
 
 import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
+import mitrich.rest.model.Url;
+import mitrich.rest.repository.UrlRepository;
+
+@Service
 public class UrlService {
 
 	@Autowired

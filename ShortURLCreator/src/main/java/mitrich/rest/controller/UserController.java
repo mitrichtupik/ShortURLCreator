@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import mitrich.rest.model.User;
-import mitrich.rest.model.UserService;
+import mitrich.rest.service.UserService;
 
 @RestController
 public class UserController {

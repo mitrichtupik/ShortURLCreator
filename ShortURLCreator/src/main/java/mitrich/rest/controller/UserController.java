@@ -3,10 +3,12 @@ package mitrich.rest.controller;
 import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +24,13 @@ public class UserController {
 	private UserService userService;
 
 	@RequestMapping(value = "/users/", method = RequestMethod.POST)
-	public ResponseEntity<User> createUser(@RequestBody User user) throws NoSuchAlgorithmException {
+	public ResponseEntity<User> createUser(@RequestBody @Valid User user, BindingResult result)
+			throws NoSuchAlgorithmException {
+
+		if (result.hasErrors()) {
+			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+		}
+
 		if (userService.findByUserName(user.getUserName()) != null) {
 			return new ResponseEntity<User>(HttpStatus.CONFLICT);
 		}
@@ -33,8 +41,12 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login/", method = RequestMethod.POST)
-	public ResponseEntity<User> loginUser(@RequestBody User usr, HttpServletResponse httpServletResponse)
-			throws NoSuchAlgorithmException {
+	public ResponseEntity<User> loginUser(@RequestBody @Valid User usr, BindingResult result,
+			HttpServletResponse httpServletResponse) throws NoSuchAlgorithmException {
+
+		if (result.hasErrors()) {
+			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+		}
 
 		User user = userService.findByUserName(usr.getUserName());
 

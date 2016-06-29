@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@WebFilter(filterName = "authFilter", urlPatterns = { "/url/", "/urls/user/*" })
+@WebFilter(filterName = "authFilter", urlPatterns = { "/urls/", "/urls/user/*" })
 public class AuthFilter implements Filter {
 
 	@Autowired
@@ -29,8 +29,6 @@ public class AuthFilter implements Filter {
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 			String authCredentials = httpServletRequest.getHeader(AUTHENTICATION_HEADER);
-
-			// better injected
 
 			// boolean authenticationStatus =
 			// authenticationService.authenticate(authCredentials);

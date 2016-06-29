@@ -120,5 +120,10 @@ textarea {
 .redirect {
 	display: inline-block;
 	float: right;
-	vertical-align: middle;
+	vertical-align: bottom;
+}
+.edit {
+	display: inline-block;
+	margin-left:30px;
+	vertical-align: bottom;
 }

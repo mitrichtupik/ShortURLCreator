@@ -184,10 +184,12 @@ $(function(){
 			for(i=0;i<len;i++){
 				var url = resp[i], shortURL = document.baseURI + url.shortURL;
 				$(kl).append('<p>Long URL:<br><a style="color:#9b9b9b;" href="'+url.longURL+'">'+url.longURL + '</a></p>' + 
-							'<p>Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
+							'<p class="clearfix">Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
 							'<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button>'+
-							'<button class="copy-button edit">Edit</button><span class="redirect">redirect: '+url.redirectCount+'</span></p>'+
-							'<p>Description:<br>'+url.description+'</p><hr>');
+							'<span class="redirect">redirect: '+url.redirectCount+'</span></p>'+
+							'<p>Description:<br>'+url.description+'</p>'+
+							'<div><div style="display:inline-block; width:470px">Tags:<br>'+url.tags+'</div>'+
+							'<button class="close-button edit">Edit</button></div><hr>');
 			};
 			
 		};
@@ -281,7 +283,7 @@ $(function(){
 
 	});
 
-//	--------------------------------------------------- Sing up user ------------------------------------------------------
+//	--------------------------------------------------- Sign up user ------------------------------------------------------
 	$('.header-signup-button').click(function() {
 		LoginMenu("Sign up");
 		var kl = '.warning';
@@ -330,7 +332,12 @@ $(function(){
 					SuccessLogin(jqXHR, 'You become a user of our service.', user);
 				},
 				error: function(jqXHR, textStatus, errorThrown){
-					$(kl).html('This user name is already taken.');
+					if (jqXHR.status == "406"){
+						$(kl).html('This user name is already taken.');
+					}
+					if (jqXHR.status == "400"){
+						$(kl).html('Invalid user name or password.');
+					}
 	            }
 			})
 			

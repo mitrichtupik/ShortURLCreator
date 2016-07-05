@@ -1,7 +1,7 @@
 $(function(){
 	
 //	--------------------------------------------------- Create short URL ------------------------------------------------------
-	function CreateUrl(user) {
+	function CreateUrl() {
 		$('.main-container').html('<div class="create-menu">'+
 										'<label>URL to be shorten<br>'+
 								  			'<input type="text" class="inputLongURL" name="longURL" value="https://www.owasp.org/index.php/REST_Security_Cheat_Sheet" autocomplete="off">'+
@@ -17,9 +17,8 @@ $(function(){
 									'<div class="create-result"></div>');
 		
 		$('.create-button').click(function(){
-			var url = document.location.pathname + "urls/",
+			var url = document.location.pathname + "security/urls/",
 				JSONobj = {
-					userName: user,
 					longURL: $('.inputLongURL').val(),
 					description: $('.inputDescription').val(),
 					tags:$('.inputTags').val().split(",").map(function(text){return text.trim()})
@@ -30,14 +29,15 @@ $(function(){
 				dataType: 'json',
 				data: JSON.stringify(JSONobj),
 				contentType:'application/json',
-				headers:{'Authorization':'Bearer ' + sessionStorage.getItem('auth_token')},
+				headers:{'Authorization':'Bearer ' + sessionStorage.getItem('access_token')},
 				async: true,
 				success: function(result){
 					ViewShortUrl(result)
 				},
 				error: function(jqXHR, textStatus, errorThrown){
 					jqXHR.status == '409' ? Message('This link is already exist in database.<br> Please enter another link.') :
-											alert(jqXHR.status + ' - ' + errorThrown);
+					(jqXHR.status == '403' ? Message('Access to this resource is forbidden. Please login correctly.') :
+													alert(jqXHR.status + ' - ' + errorThrown));
 	            }
 			})		
 		});
@@ -158,18 +158,20 @@ $(function(){
 //	--------------------------------------------------- View information of all user short URL ---------------------------------------------
 	function ViewAllMyUrl(user) {
 
-		var url = document.location.pathname + 'users/' + user + '/urls';
+		var url = document.location.pathname + 'security/urls/user/' + user;
 		$.ajax({
 			type: 'GET',
 			url: url,
 			dataType: 'json',
 			async: true,
+			headers:{'Authorization':'Bearer ' + sessionStorage.getItem('access_token')},
 			success: function(result){
 				ViewAllUrlInfo(result)
 			},
 			error: function(jqXHR, textStatus, errorThrown){
 				jqXHR.status == '404' ? Message('This user doesn\'t have any short link.') :
-										alert(jqXHR.status + ' - ' + errorThrown);
+				(jqXHR.status == '403' ? Message('Access to this resource is forbidden. Please login correctly.') :
+											alert(jqXHR.status + ' - ' + errorThrown));
 			}
 		})
 		
@@ -187,11 +189,54 @@ $(function(){
 							'<p class="clearfix">Short URL:<br><a style="color:#E32934" href="'+shortURL+'">'+shortURL+'</a>'+
 							'<button class="copy-button" data-clipboard-text="'+shortURL+'">Copy</button>'+
 							'<span class="redirect">redirect: '+url.redirectCount+'</span></p>'+
-							'<p>Description:<br>'+url.description+'</p>'+
-							'<div><div style="display:inline-block; width:470px">Tags:<br>'+url.tags+'</div>'+
-							'<button class="close-button edit">Edit</button></div><hr>');
+							'<div data-description="'+url.description+'">Description:<br>'+url.description+'</div><br>'+
+							'<div><div style="display:inline-block; width:470px" data-tags="'+url.tags+'">Tags:<br>'+url.tags+'</div>'+
+							'<button class="close-button edit" data-shorturl="'+url.shortURL+'">Edit</button></div><hr>');
 			};
-			
+			$('.edit').click(function(){
+				var shortURL = $(this).attr('data-shorturl'),
+					tags = $(this).prev().attr('data-tags'),
+					description = $(this).parent().prev().prev().attr('data-description');
+				$('body').append('<div class="edit-container">'+
+									'<div class="edit-menu">'+
+										'<br><br><button class="close-menu tag-button">X</button>'+
+										'<label>Description<br>'+
+							  			'<textarea class="inputDescription" rows="4">'+description+'</textarea>'+
+								  			'</label><br><br>'+
+							  			'<label>Tags (separate by comma)<br>'+
+								  			'<input type="text" class="inputTags" value="'+tags+'" autocomplete="off">'+
+							  			'</label><br><br>'+
+										'<button class="save-button">Save</button><br>'+
+									'</div>'+
+								 '</div>');
+				$('.close-menu').click(function() {
+					$('.edit-container').remove();
+				});
+				$('.save-button').click(function(){
+					var url = document.location.pathname + "security/urls/" + shortURL,
+						JSONobj = {
+							description: $('.inputDescription').val(),
+							tags:$('.inputTags').val().split(",").map(function(text){return text.trim()})
+						};
+					$.ajax({
+						type: 'PUT',
+						url: url,
+						dataType: 'json',
+						data: JSON.stringify(JSONobj),
+						contentType:'application/json',
+						headers:{'Authorization':'Bearer ' + sessionStorage.getItem('access_token')},
+						async: true,
+						success: function(result){
+							$('.edit-container').remove();
+							ViewAllMyUrl(user);
+						},
+						error: function(jqXHR, textStatus, errorThrown){
+							jqXHR.status == '403' ? Message('Access to this resource is forbidden. Please login correctly.') :
+															alert(jqXHR.status + ' - ' + errorThrown);
+			            }
+					})		
+				});
+			});
 		};
 	};
 	  
@@ -268,9 +313,9 @@ $(function(){
 				contentType:'application/json',
 				async: true,
 				success: function(result,textStatus,jqXHR){
-					var token = jqXHR.getResponseHeader('JWE-Token');
+					var token = result.access_token;
 					if (token) {
-						sessionStorage.setItem('auth_token',token);
+						sessionStorage.setItem('access_token',token);
 					}
 					SuccessLogin(jqXHR, 'You successfully login', user);
 				},
@@ -329,6 +374,10 @@ $(function(){
 				contentType:'application/json',
 				async: true,
 				success: function(result,textStatus,jqXHR){
+					var token = result.access_token;
+					if (token) {
+						sessionStorage.setItem('access_token',token);
+					}
 					SuccessLogin(jqXHR, 'You become a user of our service.', user);
 				},
 				error: function(jqXHR, textStatus, errorThrown){
@@ -356,9 +405,9 @@ $(function(){
 												'<button class="header-view-button">View others shortURL</button></li><li>'+
 												'<button class="header-viewAllMy-button">View all my shortURL</button></li>'+
 											'</ul>');
-				CreateUrl(user);
+				CreateUrl();
 				$('.header-create-button').click(function(){
-					CreateUrl(user);
+					CreateUrl();
 				});
 				
 				$('.header-view-button').click(function(){

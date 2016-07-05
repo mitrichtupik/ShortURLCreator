@@ -2,7 +2,6 @@ package mitrich.rest.controller;
 
 import java.security.NoSuchAlgorithmException;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import mitrich.rest.model.User;
+import mitrich.rest.security.JwtTokenUtil;
 import mitrich.rest.service.UserService;
 
 @RestController
@@ -23,40 +23,46 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+
 	@RequestMapping(value = "/users/", method = RequestMethod.POST)
-	public ResponseEntity<User> createUser(@RequestBody @Valid User user, BindingResult result)
+	public ResponseEntity<String> createUser(@RequestBody @Valid User usr, BindingResult result)
 			throws NoSuchAlgorithmException {
 
 		if (result.hasErrors()) {
-			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 
-		if (userService.findByUserName(user.getUserName()) != null) {
-			return new ResponseEntity<User>(HttpStatus.CONFLICT);
+		if (userService.findByUserName(usr.getUserName()) != null) {
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
 		}
 
-		user.setPassword(userService.passwordEncode(user.getPassword() + user.getUserName()));
-		User saved_user = userService.save(user);
-		return new ResponseEntity<User>(saved_user, HttpStatus.CREATED);
+		usr.setPassword(userService.passwordEncode(usr.getPassword() + usr.getUserName()));
+		usr.setRole("ROLE_USER");
+		User user = userService.save(usr);
+
+		String token = "{\"access_token\":\"" + jwtTokenUtil.generateToken(user) + "\"}";
+		return new ResponseEntity<String>(token, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/login/", method = RequestMethod.POST)
-	public ResponseEntity<User> loginUser(@RequestBody @Valid User usr, BindingResult result,
-			HttpServletResponse httpServletResponse) throws NoSuchAlgorithmException {
+	public ResponseEntity<String> loginUser(@RequestBody @Valid User usr, BindingResult result)
+			throws NoSuchAlgorithmException {
 
 		if (result.hasErrors()) {
-			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 
 		User user = userService.findByUserName(usr.getUserName());
 
 		if (user == null
 				|| !userService.passwordEncode(usr.getPassword() + usr.getUserName()).equals(user.getPassword())) {
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		}
 
-		httpServletResponse.addHeader("JWE-Token", "123456789abcdef");
-		return new ResponseEntity<User>(user, HttpStatus.OK);
+		String token = "{\"access_token\":\"" + jwtTokenUtil.generateToken(user) + "\"}";
+		return new ResponseEntity<String>(token, HttpStatus.OK);
 	}
 
 }

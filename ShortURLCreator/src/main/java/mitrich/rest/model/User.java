@@ -14,20 +14,25 @@ public class User {
 
 	@Id
 	private String id;
+
 	@NotNull
 	private String userName;
+
 	@NotNull
 	@Size(min = 6)
 	private String password;
+
+	private String role;
 
 	public User() {
 
 	}
 
-	public User(String userName, String password) {
+	public User(String userName, String password, String role) {
 		super();
 		this.userName = userName;
 		this.password = password;
+		this.role = role;
 	}
 
 	@JsonIgnore
@@ -55,6 +60,14 @@ public class User {
 	@JsonProperty()
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override

@@ -46,7 +46,7 @@ button {
 .big-button {
 	width:100%;
 }
-.close-button, .submit-button {
+.close-button, .submit-button, .save-button {
 	margin:0 auto;
 	display:block;
 }
@@ -85,7 +85,7 @@ textarea {
 .create-result, .view-result, .view-tag-result {
 	display: none;
 }
-.login-container, .message-container {
+.login-container, .message-container, .edit-container {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -126,4 +126,12 @@ textarea {
 	display: inline-block;
 	margin-left:30px;
 	vertical-align: bottom;
+}
+.edit-menu{
+	position: relative;
+	top: 50px;
+	width: 500px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 0 15px;
 }

@@ -1,6 +1,8 @@
 package mitrich.rest.controller;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -27,42 +29,48 @@ public class UserController {
 	private JwtTokenUtil jwtTokenUtil;
 
 	@RequestMapping(value = "/users/", method = RequestMethod.POST)
-	public ResponseEntity<String> createUser(@RequestBody @Valid User usr, BindingResult result)
+	public ResponseEntity<?> createUser(@RequestBody @Valid User usr, BindingResult result)
 			throws NoSuchAlgorithmException {
 
 		if (result.hasErrors()) {
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
 		if (userService.findByUserName(usr.getUserName()) != null) {
-			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 
 		usr.setPassword(userService.passwordEncode(usr.getPassword() + usr.getUserName()));
 		usr.setRole("ROLE_USER");
 		User user = userService.save(usr);
 
-		String token = "{\"access_token\":\"" + jwtTokenUtil.generateToken(user) + "\"}";
-		return new ResponseEntity<String>(token, HttpStatus.CREATED);
+		// String token = "{\"access_token\":\"" +
+		// jwtTokenUtil.generateToken(user) + "\"}";
+		Map<String, String> token = new HashMap<String, String>();
+		token.put("access_token", jwtTokenUtil.generateToken(user));
+		return new ResponseEntity<>(token, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/login/", method = RequestMethod.POST)
-	public ResponseEntity<String> loginUser(@RequestBody @Valid User usr, BindingResult result)
+	public ResponseEntity<?> loginUser(@RequestBody @Valid User usr, BindingResult result)
 			throws NoSuchAlgorithmException {
 
 		if (result.hasErrors()) {
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
 		User user = userService.findByUserName(usr.getUserName());
 
 		if (user == null
 				|| !userService.passwordEncode(usr.getPassword() + usr.getUserName()).equals(user.getPassword())) {
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
-		String token = "{\"access_token\":\"" + jwtTokenUtil.generateToken(user) + "\"}";
-		return new ResponseEntity<String>(token, HttpStatus.OK);
+		// String token = "{\"access_token\":\"" +
+		// jwtTokenUtil.generateToken(user) + "\"}";
+		Map<String, String> token = new HashMap<String, String>();
+		token.put("access_token", jwtTokenUtil.generateToken(user));
+		return new ResponseEntity<>(token, HttpStatus.OK);
 	}
 
 }

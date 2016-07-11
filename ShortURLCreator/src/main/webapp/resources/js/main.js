@@ -4,13 +4,13 @@ $(function(){
 	function CreateUrl() {
 		$('.main-container').html('<div class="create-menu">'+
 										'<label>URL to be shorten<br>'+
-								  			'<input type="text" class="inputLongURL" name="longURL" value="https://www.owasp.org/index.php/REST_Security_Cheat_Sheet" autocomplete="off">'+
+								  			'<input type="text" class="inputLongURL" name="longURL" autocomplete="off">'+
 							  			'</label><br>'+
 							  			'<label>Description<br>'+
-							  			'<textarea class="inputDescription" name="description" rows="4">This is another link to resource</textarea>'+
+							  			'<textarea class="inputDescription" name="description" rows="4"></textarea>'+
 								  			'</label><br>'+
 							  			'<label>Tags (separate by comma)<br>'+
-								  			'<input type="text" class="inputTags" name="tags" value="spring, NoSQL,   mongoDB" autocomplete="off">'+
+								  			'<input type="text" class="inputTags" name="tags" autocomplete="off">'+
 							  			'</label><br><br>'+
 							  			'<button class="create-button big-button">Shorten</button>'+
 									'</div>'+
@@ -66,7 +66,7 @@ $(function(){
 	function ViewUrl() {
 		$('.main-container').html('<div class="view-menu">'+
 										'<label>Enter short URL to viewing full info<br>'+
-								  			'<input type="text" class="inputShortURL" name="ShortURL" value="http://localhost:8080/SURL/Af5w6K" autocomplete="off">'+
+								  			'<input type="text" class="inputShortURL" name="ShortURL" autocomplete="off">'+
 							  			'</label><br><br>'+
 							  			'<button class="view-button big-button">View info</button>'+
 								  '</div>'+
@@ -260,10 +260,10 @@ $(function(){
 								'<br><h3>'+title+'</h3><hr>'+
 								'<button class="close-menu tag-button">X</button>'+
 								'<p><label>User name'+
-									'<br><input type="text" class="login-username" autocomplete="off" value="mit" required>'+
+									'<br><input type="text" class="login-username" autocomplete="off" required>'+
 								'</label></p>'+
 								'<p><label>Password'+
-									'<br><input type="password" class="login-password" autocomplete="off" value="qwerty" required>'+
+									'<br><input type="password" class="login-password" autocomplete="off" required>'+
 								'</label></p>'+
 								'<p class="warning"></p>' +
 								'<button class="submit-button">Submit</button><br>'+

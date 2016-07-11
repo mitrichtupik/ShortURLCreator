@@ -44,8 +44,6 @@ public class UserController {
 		usr.setRole("ROLE_USER");
 		User user = userService.save(usr);
 
-		// String token = "{\"access_token\":\"" +
-		// jwtTokenUtil.generateToken(user) + "\"}";
 		Map<String, String> token = new HashMap<String, String>();
 		token.put("access_token", jwtTokenUtil.generateToken(user));
 		return new ResponseEntity<>(token, HttpStatus.CREATED);
@@ -66,8 +64,6 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
-		// String token = "{\"access_token\":\"" +
-		// jwtTokenUtil.generateToken(user) + "\"}";
 		Map<String, String> token = new HashMap<String, String>();
 		token.put("access_token", jwtTokenUtil.generateToken(user));
 		return new ResponseEntity<>(token, HttpStatus.OK);

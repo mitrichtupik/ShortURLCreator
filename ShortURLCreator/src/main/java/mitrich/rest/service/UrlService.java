@@ -43,16 +43,16 @@ public class UrlService {
 
 	public String randomString(int length) {
 		Random random = new Random();
-		String str;
+		StringBuilder str;
 		do {
-			str = "";
+			str = new StringBuilder();
 			for (int i = 0; i < length; i++) {
 				int n = random.nextInt(62);
-				str += (char) (n < 10 ? ('0' + n) : (n > 35 ? ('a' + n - 36) : ('A' + n - 10)));
+				str.append((char) (n < 10 ? ('0' + n) : (n > 35 ? ('a' + n - 36) : ('A' + n - 10))));
 			}
-		} while (findByShortURL(str) != null);
+		} while (findByShortURL(str.toString()) != null);
 
-		return str;
+		return str.toString();
 	}
 
 }

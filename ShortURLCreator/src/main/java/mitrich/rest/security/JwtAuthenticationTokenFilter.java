@@ -22,28 +22,14 @@ public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessi
 
 	public JwtAuthenticationTokenFilter() {
 		super("/security/**");
-		// super(new OrRequestMatcher(
-		// Arrays.asList(new AntPathRequestMatcher("/urls/"), new
-		// AntPathRequestMatcher("/urls/user/*"))));
 	}
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 		super.successfulAuthentication(request, response, chain, authResult);
-		// String userName = ((UserDetails)
-		// authResult.getPrincipal()).getUsername();
-		// String userNameFromRequest = request.getRequestURI();
-		// userNameFromRequest =
-		// userNameFromRequest.substring(userNameFromRequest.lastIndexOf("/") +
-		// 1);
-		// if (userName.equals(userNameFromRequest)) {
 
 		chain.doFilter(request, response);
-
-		// } else {
-		// response.sendError(HttpServletResponse.SC_FORBIDDEN);
-		// }
 
 	}
 
